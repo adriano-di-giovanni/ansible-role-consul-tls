@@ -1,5 +1,7 @@
 # Ansible Role: Consul TLS
 
+[![Build Status](https://travis-ci.org/adriano-di-giovanni/ansible-role-consul-tls.svg?branch=master)](https://travis-ci.org/adriano-di-giovanni/ansible-role-consul-tls)
+
 Generates self-signed OpenSSL certificates to be used by Consul for [RPC encryption with TLS](https://www.consul.io/docs/agent/encryption.html).
 
 ## Requirements
