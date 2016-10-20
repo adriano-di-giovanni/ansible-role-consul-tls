@@ -1,7 +1,23 @@
 ---
 consul_tls_dir: ~/.consul_tls/ca
+
+consul_tls_database_file: index.txt
+consul_tls_serial_file: serial
+consul_tls_default_days: '{{ 365 * 10 }}'
+
 consul_tls_ca_private_key_file: ca.key.pem
-consul_tls_ca_certificate_file: ca.cert.pem
+consul_tls_ca_certificate_file: ca.crt.pem
+
 consul_tls_consul_private_key_file: consul.key.pem
-consul_tls_consul_certificate_file: consul.cert.pem
+consul_tls_consul_certificate_file: consul.crt.pem
 consul_tls_consul_csr_file: consul.csr.pem
+
+consul_tls_subj: '{{
+  [
+    "/C=US",
+    "/ST=California",
+    "/L=San Francisco",
+    "/O=HashiCorp",
+    "/CN=HashiCorp"
+  ] | join
+}}'

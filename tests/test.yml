@@ -2,4 +2,5 @@
 - hosts: localhost
   connection: local
   roles:
-    - ansible-role-consul-tls
+    - role: ansible-role-consul-tls
+      consul_datacenter: default
