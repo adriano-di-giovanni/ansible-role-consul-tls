@@ -3,4 +3,5 @@
   connection: local
   roles:
     - role: ansible-role-consul-tls
-      consul_datacenter: default
+      consul_tls_out_dir: /tmp/consul_tls
+      consul_datacenter: dc1

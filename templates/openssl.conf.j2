@@ -2,7 +2,7 @@
 default_ca = CA_default
 
 [ CA_default ]
-dir = {{ consul_tls_dir | expanduser }}
+dir = {{ consul_tls_out_dir | expanduser }}
 database = $dir/{{ consul_tls_database_file }}
 unique_subject = no
 new_certs_dir = $dir

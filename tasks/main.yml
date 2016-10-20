@@ -1,57 +1,57 @@
 ---
 - name: Create Output Directory
   file:
-    path: '{{ consul_tls_dir }}'
+    path: '{{ consul_tls_out_dir }}'
     state: directory
 
 - name: Create Database File
   file:
-    path: '{{ consul_tls_dir }}/{{ consul_tls_database_file }}'
+    path: '{{ consul_tls_out_dir }}/{{ consul_tls_database_file }}'
     state: touch
 
 - name: Create Serial Number File
   copy:
     content: 1000
-    dest: '{{ consul_tls_dir }}/{{ consul_tls_serial_file }}'
+    dest: '{{ consul_tls_out_dir }}/{{ consul_tls_serial_file }}'
 
 - name: Generate Self-Signed Root CA Certificate
   command: >
     openssl req
       -days {{ 365 * 99 }}
-      -keyout {{ consul_tls_dir }}/{{ consul_tls_ca_private_key_file }}
+      -keyout {{ consul_tls_out_dir }}/{{ consul_tls_ca_private_key_file }}
       -newkey rsa:2048
       -nodes
-      -out {{ consul_tls_dir }}/{{ consul_tls_ca_certificate_file }}
+      -out {{ consul_tls_out_dir }}/{{ consul_tls_ca_certificate_file }}
       -sha256
       -subj '{{ consul_tls_subj }}'
       -x509
   args:
-    creates: '{{ consul_tls_dir }}/{{ consul_tls_ca_certificate_file }}'
+    creates: '{{ consul_tls_out_dir }}/{{ consul_tls_ca_certificate_file }}'
 
 - name: Create Certificate Signing Request
   command: >
     openssl req
-      -keyout {{ consul_tls_dir }}/{{ consul_tls_consul_private_key_file }}
+      -keyout {{ consul_tls_out_dir }}/{{ consul_tls_consul_private_key_file }}
       -newkey rsa:2048
       -nodes
       -sha256
       -subj '/CN=*.{{ consul_datacenter }}.consul'
-      -out {{ consul_tls_dir }}/{{ consul_tls_consul_csr_file }}
+      -out {{ consul_tls_out_dir }}/{{ consul_tls_consul_csr_file }}
   args:
-    creates: '{{ consul_tls_dir }}/{{ consul_tls_consul_csr_file }}'
+    creates: '{{ consul_tls_out_dir }}/{{ consul_tls_consul_csr_file }}'
 
 - name: Create CA Configuration File
   template:
-    dest: '{{ consul_tls_dir }}/openssl.conf'
+    dest: '{{ consul_tls_out_dir }}/openssl.conf'
     src: openssl.conf.j2
 
 - name: Create Self-Signed Certificate
   command: >
     openssl ca
       -batch
-      -config '{{ consul_tls_dir }}/openssl.conf'
-      -in {{ consul_tls_dir }}/{{ consul_tls_consul_csr_file }}
+      -config '{{ consul_tls_out_dir }}/openssl.conf'
+      -in {{ consul_tls_out_dir }}/{{ consul_tls_consul_csr_file }}
       -notext
-      -out {{ consul_tls_dir }}/{{ consul_tls_consul_certificate_file }}
+      -out {{ consul_tls_out_dir }}/{{ consul_tls_consul_certificate_file }}
   args:
-    creates: '{{ consul_tls_dir }}/{{ consul_tls_consul_certificate_file }}'
+    creates: '{{ consul_tls_out_dir }}/{{ consul_tls_consul_certificate_file }}'
