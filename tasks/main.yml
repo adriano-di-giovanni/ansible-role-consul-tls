@@ -1,0 +1,55 @@
+---
+- name: create directory
+  file:
+    path: '{{ consul_tls_dir }}'
+    state: directory
+
+- name: preseed serial file
+  copy:
+    content: 1000
+    dest: '{{ consul_tls_dir }}/serial'
+
+- name: touch index file
+  file:
+    path: '{{ consul_tls_dir }}/index'
+    state: touch
+
+- name: create a certificate authority configuration file
+  template:
+    dest: '{{ consul_tls_dir }}/openssl.conf'
+    src: openssl.conf.j2
+
+- name: create the CA private key and certificate
+  command: >
+    openssl req
+      -days {{ 365 * 99 }}
+      -keyout {{ consul_tls_dir }}/{{ consul_tls_ca_private_key_file }}
+      -newkey rsa:2048
+      -nodes
+      -out {{ consul_tls_dir }}/{{ consul_tls_ca_certificate_file }}
+      -subj '/C=IT/ST=Italy/L=Rome/O=Adriano Di Giovanni/OU=Adriano Di Giovanni Certificate Authority/CN=Adriano Di Giovanni Certificate Authority/emailAddress=me@adrianodigiovanni.com'
+      -x509
+  args:
+    creates: '{{ consul_tls_dir }}/{{ consul_tls_ca_certificate_file }}'
+
+- name: create a wildcard certificate signing request
+  command: >
+    openssl req
+      -keyout {{ consul_tls_dir }}/{{ consul_tls_consul_private_key_file }}
+      -newkey rsa:1024
+      -nodes
+      -subj '/C=IT/ST=Italy/L=Rome/O=Adriano Di Giovanni/OU=Adriano Di Giovanni Certificate Authority/CN=*.default.consul'
+      -out {{ consul_tls_dir }}/{{ consul_tls_consul_csr_file }}
+  args:
+    creates: '{{ consul_tls_dir }}/{{ consul_tls_consul_csr_file }}'
+
+- name: sign the certificate signing request to generate a certificate
+  command: >
+    openssl ca
+      -batch
+      -config '{{ consul_tls_dir }}/openssl.conf'
+      -in {{ consul_tls_dir }}/{{ consul_tls_consul_csr_file }}
+      -notext
+      -out {{ consul_tls_dir }}/{{ consul_tls_consul_certificate_file }}
+  args:
+    creates: '{{ consul_tls_dir }}/{{ consul_tls_consul_certificate_file }}'

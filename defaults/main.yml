@@ -1,0 +1,7 @@
+---
+consul_tls_dir: ~/.consul_tls/ca
+consul_tls_ca_private_key_file: ca.key.pem
+consul_tls_ca_certificate_file: ca.cert.pem
+consul_tls_consul_private_key_file: consul.key.pem
+consul_tls_consul_certificate_file: consul.cert.pem
+consul_tls_consul_csr_file: consul.csr.pem
