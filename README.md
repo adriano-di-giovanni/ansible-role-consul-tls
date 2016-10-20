@@ -34,7 +34,7 @@ This role is meant to be run locally.
 - hosts: localhost
   connection: local
   roles:
-    - role: adigiovanni.consul_tls
+    - role: adriano-di-giovanni.consul-tls
       consul_tls_out_dir: /tmp/consul_tls
       consul_datacenter: dc1
 ```
